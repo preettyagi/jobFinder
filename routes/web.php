@@ -15,6 +15,7 @@ Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
 Route::get('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout');
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');

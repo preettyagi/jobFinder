@@ -32,7 +32,19 @@ class LoginController extends Controller
         }
         // Authentication failed
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => ' ',
+            'password' => 'The provided credentials do not match our records.'
         ])->onlyInput('email');
+    }
+
+    // Handle the logout request
+    public function logoutUser(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        // Invalidate the session
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login')->with('success', 'Logout successful!');
     }
 }
