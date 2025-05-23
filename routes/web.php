@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\JobController;
@@ -11,21 +12,34 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/login', [LoginController::class, 'login'])->name('login');
-Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
-Route::get('/register', [RegisterController::class, 'register'])->name('register');
-Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'login'])->name('login');
+    Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
+    Route::get('/register', [RegisterController::class, 'register'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+});
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+/*
+Route::get('/login', [LoginController::class, 'login'])->name('login')->middleware('guest');
+Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate')->middleware('guest');
+Route::get('/register', [RegisterController::class, 'register'])->name('register')->middleware('guest');
+Route::post('/register', [RegisterController::class, 'store'])->name('register.store')->middleware('guest');
+*/
 Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout');
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
-Route::get('/jobs/create', [JobController::class, 'create']);
+Route::get('/jobs/create', [JobController::class, 'create'])->middleware('auth');
 Route::get('/jobs/{job}', [JobController::class, 'show'])->name('jobs.show');
-Route::get('/jobs/{job}/edit', [JobController::class, 'edit'])->name('jobs.edit');
+Route::get('/jobs/{job}/edit', [JobController::class, 'edit'])->name('jobs.edit')->middleware('auth');
 
-Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
-Route::put('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update');
-Route::delete('/jobs/{job}', [JobController::class, 'destroy'])->name('jobs.destroy');
+Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store')->middleware('auth');
+Route::put('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update')->middleware('auth');
+Route::delete('/jobs/{job}', [JobController::class, 'destroy'])->name('jobs.destroy')->middleware('auth');
+
+//Route::resource('jobs', JobController::class)->middleware('auth')->only([create, store, edit, update, destroy]);
+//Route::resource('jobs', JobController::class)->except([create, store, edit, update, destroy]);
+
 /*
 Route::get('/post/{id}', function (string $id) {
     return 'Id is ' . $id;
