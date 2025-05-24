@@ -15,4 +15,7 @@
     <li>Not available</li>
     @endforelse
     </div>
+
+    {{-- Pagination Links --}}
+    {{$jobs->links()}}
 </x-layout>
